@@ -2,10 +2,10 @@
     "name": "calypso-lang",
     "displayName": "Calypso Programming Language",
     "description": "Syntax highlighting for Calypso",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "publisher": "calypso-lang",
     "engines": {
-        "vscode": "^1.54.0"
+        "vscode": ">=1.53.2"
     },
     "categories": [
         "Programming Languages"
