@@ -563,7 +563,7 @@
 				{
 					"comment": "primitive types",
 					"name": "entity.name.type.primitive.calypso",
-					"match": "\\b(bool|char|string|array|tuple|map|atom)\\b"
+					"match": "\\b(bool|char|string|array|tuple|map|atom|any)\\b"
 				},
 				{
 					"comment": "trait declarations",
