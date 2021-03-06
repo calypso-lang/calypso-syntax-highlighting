@@ -3,12 +3,18 @@
     "displayName": "Calypso Programming Language",
     "description": "Syntax highlighting for Calypso",
     "version": "0.0.1",
+    "publisher": "calypso-lang",
     "engines": {
         "vscode": "^1.54.0"
     },
     "categories": [
         "Programming Languages"
     ],
+    "author": "ThePuzzlemaker <tpzker@thepuzzlemaker.info>",
+    "bugs": "https://github.com/calypso-lang/calypso-syntax-highlighting/issues",
+    "homepage": "https://github.com/calypso-lang/calypso-syntax-highlighting",
+    "license": "MIT",
+    "repository": "github:calypso-lang/calypso-syntax-highlighting",
     "contributes": {
         "languages": [{
             "id": "calypso",
