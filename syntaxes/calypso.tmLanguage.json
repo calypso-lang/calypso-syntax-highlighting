@@ -1,0 +1,719 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"comment": "This file was somewhat inspired by https://github.com/microsoft/vscode/blob/main/extensions/rust/syntaxes/rust.tmLanguage.json which is under the MIT license.",
+	"name": "Calypso",
+	"patterns": [
+		{
+			"comment": "attributes",
+			"name": "meta.attribute.calypso",
+			"match": "(@)(\\!?)([A-Za-z_][A-Za-z0-9_]*\\!?\\??)(?:\\([^\\)\\n]*\\))?",
+			"captures": {
+				"1": {
+					"name": "punctuation.definition.attribute.calypso"
+				},
+				"2": {
+					"name": "keyword.operator.attribute.inner.calypso"
+				},
+				"3": {
+					"name": "meta.attribute.name.calypso"
+				},
+				"4": {
+					"name": "meta.attribute.content.calypso"
+				}
+			}
+		},
+		{
+			"comment": "modules",
+			"match": "(mod)\\s+(?!root|[Ss]elf|super)([a-z][A-Za-z0-9_]*)",
+			"captures": {
+				"1": {
+					"name": "storage.type.calypso"
+				},
+				"2": {
+					"name": "entity.name.module.calypso"
+				}
+			}
+		},
+		{
+			"comment": "import statements",
+			"name": "meta.import.calypso",
+			"begin": "\\b(import)\\s",
+			"beginCaptures": {
+				"1": {
+					"name": "keyword.other.calypso"
+				}
+			},
+			"end": "}|\\n",
+			"endCaptures": {
+				"0": {
+					"name": "punctuation.semi.calypso"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#block-comments"
+				},
+				{
+					"include": "#comments"
+				},
+				{
+					"include": "#keywords"
+				},
+				{
+					"include": "#namespaces"
+				},
+				{
+					"include": "#punctuation"
+				},
+				{
+					"include": "#special-variables"
+				}
+			]
+		},
+		{
+			"include": "#constants"
+		},
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#block-comments"
+		},
+		{
+			"include": "#comments"
+		},
+		{
+			"include": "#punctuation"
+		},
+		{
+			"include": "#namespace"
+		},
+		{
+			"include": "#special-variables"
+		},
+		{
+			"include": "#variables"
+		},
+		{
+			"include": "#strings"
+		},
+		{
+			"include": "#types"
+		},
+		{
+			"include": "#functions"
+		}
+	],
+	"repository": {
+		"comments": {
+			"patterns": [
+				{
+					"comment": "doc comments, internal or external",
+					"name": "comment.line.documentation",
+					"match": "^\\s*//[/!]{1}.*"
+				},
+				{
+					"comment": "regular comments",
+					"name": "comment.line.double-slash",
+					"match": "\\s*//.*"
+				}
+			]
+		},
+		"block-comments": {
+			"patterns": [
+				{
+					"comment": "empty doc comment",
+					"name": "comment.block.documentation.calypso",
+					"match": "/\\*[\\*!]{1}\\*/"
+				},
+				{
+					"comment": "empty block comment",
+					"name": "comment.block.calypso",
+					"match": "/\\*\\*/"
+				},
+				{
+					"comment": "block doc comment",
+					"name": "comment.block.documentation.calypso",
+					"begin": "/\\*[\\*!]{1}",
+					"end": "\\*/",
+					"patterns": [
+						{
+							"include": "#block-comments"
+						}
+					]
+				},
+				{
+					"comment": "block comment",
+					"name": "comment.block.calypso",
+					"begin": "/\\*(?!\\*)",
+					"end": "\\*/",
+					"patterns": [
+						{
+							"include": "#block-comments"
+						}
+					]
+				}
+			]
+		},
+		"keywords": {
+			"patterns": [
+				{
+					"comment": "control flow",
+					"name": "keyword.control.calypso",
+					"match": "\\b(break|continue|do|else|for|if|loop|case|ret|try|catch|while|throw|end|->|\\|>)\\b"
+				},
+				{
+					"comment": "storage keywords",
+					"name": "storage.type.calypso",
+					"match": "\\b(const|extern|let|mod|struct|trait|marker)\\b"
+				},
+				{
+					"comment": "other keywords",
+					"name": "keyword.other.calypso",
+					"match": "\\b(as|impl|in|is|isa|isan|pub|import|where|assert|self|super)\\b"
+				},
+				{
+					"comment": "fn",
+					"name": "keyword.other.fn.calypso",
+					"match": "\\bfn\\b"
+				},
+				{
+					"comment": "root",
+					"name": "keyword.other.root.calypso",
+					"match": "\\broot\\b"
+				},
+				{
+					"comment": "mut",
+					"name": "storage.modifier.mut.calypso",
+					"match": "\\bmut\\b"
+				},
+				{
+					"comment": "logical operators",
+					"name": "keyword.operator.logical.calypso",
+					"match": "(\\^|\\||\\|\\||&&|<<|>>|!)(?!=)"
+				},
+				{
+					"comment": "logical AND",
+					"name": "keyword.operator.and.calypso",
+					"match": "&(?![&=])"
+				},
+				{
+					"comment": "assignment operators",
+					"name": "keyword.operator.assignment.calypso",
+					"match": "(\\+=|-=|\\*=|\\*\\*=|/=|%=|\\^=|&=|\\|=|<<=|>>=)"
+				},
+				{
+					"comment": "single equal",
+					"name": "keyword.operator.assingment.equal.calypso",
+					"match": "(?<![<>])=(?!=|>)"
+				},
+				{
+					"comment": "comparison operators",
+					"name": "keyword.operator.comparison.calypso",
+					"match": "(=(=)?(?!>)|!=|<=|(?<!=)>=)"
+				},
+				{
+					"comment": "math operators",
+					"name": "keyword.operator.math.calypso",
+					"match": "(([+%]|(\\*{1,2}))(?!=))|(-(?!>))|(/(?!/))"
+				},
+				{
+					"comment": "less than, greater than (special case)",
+					"match": "(?:\\b|(?:(\\))|(\\])|(\\})))[ \\t]+([<>])[ \\t]+(?:\\b|(?:(\\()|(\\[)|(\\{)))",
+					"captures": {
+						"1": {
+							"name": "punctuation.brackets.round.calypso"
+						},
+						"2": {
+							"name": "punctuation.brackets.square.calypso"
+						},
+						"3": {
+							"name": "punctuation.brackets.curly.calypso"
+						},
+						"4": {
+							"name": "keyword.operator.comparison.calypso"
+						},
+						"5": {
+							"name": "punctuation.brackets.round.calypso"
+						},
+						"6": {
+							"name": "punctuation.brackets.square.calypso"
+						},
+						"7": {
+							"name": "punctuation.brackets.curly.calypso"
+						}
+					}
+				},
+				{
+					"comment": "dot access",
+					"name": "keyword.operator.access.dot.calyppso",
+					"match": "\\.(?!\\.)"
+				},
+				{
+					"comment": "ranges, range patterns",
+					"name": "keyword.operator.range.calypso",
+					"match": "\\.{2}(=|\\.)?"
+				},
+				{
+					"comment": "colon",
+					"name": "keyword.operator.key-value.calypso",
+					"match": ":(?![:A-Za-z0-9\"])"
+				},
+				{
+					"comment": "dashrocket, skinny arrow",
+					"name": "keyword.operator.arrow.skinny.calypso",
+					"match": "->"
+				},
+				{
+					"comment": "hashrocket, fat arrow",
+					"name": "keyword.operator.arrow.fat.calypso",
+					"match": "=>"
+				},
+				{
+					"comment": "builtin functions",
+					"name": "entity.name.function.calypso",
+					"match": "(println|type)"
+				}
+			]
+		},
+		"punctuation": {
+			"patterns": [
+				{
+					"comment": "comma",
+					"name": "punctuation.comma.calypso",
+					"match": ","
+				},
+				{
+					"comment": "curly braces",
+					"name": "punctuation.braces.curly.calypso",
+					"match": "[{}]"
+				},
+				{
+					"comment": "parentheses, round brackets",
+					"name": "punctuation.brackets.round.calypso",
+					"match": "[()]"
+				},
+				{
+					"comment": "semicolon",
+					"name": "punctuation.semi.calypso",
+					"match": ";"
+				},
+				{
+					"comment": "square brackets",
+					"name": "punctuation.brackets.square.calypso",
+					"match": "[\\[\\]]"
+				},
+				{
+					"comment": "angle brackets",
+					"name": "punctuation.brackets.angle.calypso",
+					"match": "(?<!=)[<>]"
+				}
+			]
+		},
+		"special-variables": {
+			"patterns": [
+				{
+					"comment": "self",
+					"name": "variable.language.self.calypso",
+					"match": "\\b[Ss]elf\\b"
+				},
+				{
+					"comment": "super",
+					"name": "variable.language.super.calypso",
+					"match": "\\bsuper\\b"
+				}
+			]
+		},
+		"variables": {
+			"patterns": [
+				{
+					"comment": "variables",
+					"name": "variable.other.calypso",
+					"match": "\b(?<!(?<!\\.)\\.)(?!(root|[Ss]elf|super))[A-Za-z_][A-Za-z0-9_]*\\!?\\??"
+				}
+			]
+		},
+		"namespaces": {
+			"patterns": [
+				{
+					"comment": "namespace (non-type, non-function path segment)",
+					"match": "(?<![A-Za-z0-9_])([a-z0-9_]+)((?<!super|self)\\.)",
+					"captures": {
+						"1": {
+							"name": "entity.name.namespace.calypso"
+						},
+						"2": {
+							"name": "keyword.operator.namespace.calypso"
+						}
+					}
+				}
+			]
+		},
+		"constants": {
+			"patterns": [
+				{
+					"comment": "ALL CAPS constants",
+					"name": "constant.other.caps.calypso",
+					"match": "\\b[A-Z]{2}[A-Z0-9_]*\\!?\\??\\b"
+				},
+				{
+					"comment": "constant declarations",
+					"match": "\\b(const)\\s+([A-Z][A-Za-z0-9_]*\\!?\\??)\\b",
+					"captures": {
+						"1": {
+							"name": "storage.type.calypso"
+						},
+						"2": {
+							"name": "constant.other.caps.calypso"
+						}
+					}
+				},
+				{
+					"comment": "decimal integers and floats",
+					"name": "constant.numeric.decimal.calypso",
+					"match": "\\b[\\-]?\\d[\\d_]*(\\.?)[\\d_]*(?:(E)([+-])([\\d_]+))?(f|s|u)?\\b",
+					"captures": {
+						"1": {
+							"name": "punctuation.separator.dot.decimal.calypso"
+						},
+						"2": {
+							"name": "keyword.operator.exponent.calypso"
+						},
+						"3": {
+							"name": "keyword.operator.exponent.sign.calypso"
+						},
+						"4": {
+							"name": "constant.numeric.decimal.exponent.mantissa.calypso"
+						},
+						"5": {
+							"name": "entity.name.type.numeric.calypso"
+						}
+					}
+				},
+				{
+					"comment": "hexadecimal integers",
+					"name": "constant.numeric.hex.calypso",
+					"match": "\\b0x[\\da-fA-F_]+(u|s)?\\b",
+					"captures": {
+						"1": {
+							"name": "entity.name.type.numeric.calypso"
+						}
+					}
+				},
+				{
+					"comment": "octal integers",
+					"name": "constant.numeric.oct.calypso",
+					"match": "\\b0o[0-7_]+(u|s)?\\b",
+					"captures": {
+						"1": {
+							"name": "entity.name.type.numeric.calypso"
+						}
+					}
+				},
+				{
+					"comment": "binary integers",
+					"name": "constant.numeric.bin.calypso",
+					"match": "\\b0b[01_]+(u|s)?\\b",
+					"captures": {
+						"1": {
+							"name": "entity.name.type.numeric.calypso"
+						}
+					}
+				},
+				{
+					"comment": "booleans",
+					"name": "constant.language.bool.calypso",
+					"match": "\\b(true|false)\\b"
+				},
+				{
+					"comment": "nulls",
+					"name": "constant.language.null.calypso",
+					"match": "\\bnull\\b"
+				},
+				{
+					"comment": "atoms--they're essentially keywords so we treat them as so",
+					"name": "keyword.other.calypso",
+					"match": ":(?!\")[A-Za-z_][A-Za-z0-9_]*\\!?\\??"
+				},
+				{
+					"comment": "atoms, strings",
+					"name": "keyword.other.calypso",
+					"begin": "(:)(\")",
+					"beginCaptures": {
+						"1": {
+							"name": "punctuation.atom.calypso"
+						},
+						"2": {
+							"name": "punctuation.defintition.string.calypso"
+						}
+					},
+					"contentName": "string.quoted.double.calypso",
+					"end": "\"",
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.definition.string.calypso"
+						}
+					}
+				}
+			]
+		},
+		"escapes": {
+			"comment": "escapes: ASCII, byte, Unicode, quote, regex",
+			"name": "constant.character.escape.calypso",
+			"match": "(\\\\)(?:(?:(x[0-7][0-7a-fA-F])|(u(\\{)[\\da-fA-F]{4,6}(\\}))|.))",
+			"captures": {
+				"1": {
+					"name": "constant.character.escape.backslash.calypso"
+				},
+				"2": {
+					"name": "constant.character.escape.bit.calypso"
+				},
+				"3": {
+					"name": "constant.character.escape.unicode.calypso"
+				},
+				"4": {
+					"name": "constant.character.escape.unicode.punctuation.calypso"
+				},
+				"5": {
+					"name": "constant.character.escape.unicode.punctuation.calypso"
+				}
+			}
+		},
+		"interpolations": {
+			"comment": "string interpolations",
+			"name": "meta.interpolation.calypso",
+			"begin": "\\${",
+			"beginCaptures": {
+				"1": {
+					"name": "punctuation.definition.interpolation.calypso"
+				}
+			},
+			"end": "}",
+			"endCaptures": {
+				"1": {
+					"name": "punctuation.definition.interpolation.calypso"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#source.calypso"
+				}
+			]
+		},
+		"strings": {
+			"patterns": [
+				{
+					"comment": "double-quoted strings",
+					"name": "string.quoted.double.calypso",
+					"begin": "(\")",
+					"beginCaptures": {
+						"1": {
+							"name": "punctuation.definition.string.calypso"
+						}
+					},
+					"end": "\"",
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.definition.string.calypso"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#escapes"
+						},
+						{
+							"include": "#interpolations"
+						}
+					]
+				},
+				{
+					"comment": "characters",
+					"name": "string.quoted.single.char.calypso",
+					"begin": "(')",
+					"beginCaptures": {
+						"1": {
+							"name": "punctuation.definition.char.calypso"
+						}
+					},
+					"end": "'",
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.definition.char.calypso"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#escapes"
+						}
+					]
+				}
+			]
+		},
+		"types": {
+			"patterns": [
+				{
+					"comment": "numeric types",
+					"match": "(?<![A-Za-z])(float|sint|uint)\\b",
+					"captures": {
+						"1": {
+							"name": "entity.name.type.numeric.calypso"
+						}
+					}
+				},
+				{
+					"comment": "primitive types",
+					"name": "entity.name.type.primitive.calypso",
+					"match": "\\b(bool|char|string|array|tuple|map|atom)\\b"
+				},
+				{
+					"comment": "trait declarations",
+					"match": "\\b(trait)\\s+([A-Z][A-Za-z0-9]*)\\b",
+					"captures": {
+						"1": {
+							"name": "storage.type.calypso"
+						},
+						"2": {
+							"name": "entity.name.type.trait.calypso"
+						}
+					}
+				},
+				{
+					"comment": "types",
+					"name": "entity.name.type.calypso",
+					"match": "\\b[A-Z][A-Za-z0-9]*\\b"
+				}
+			]
+		},
+		"functions": {
+			"patterns": [
+				{
+					"comment": "pub as a function",
+					"match": "\\b(pub)(\\()",
+					"captures": {
+						"1": {
+							"name": "keyword.other.calypso"
+						},
+						"2": {
+							"name": "punctuation.brackets.round.calypso"
+						}
+					}
+				},
+				{
+					"comment": "function definition",
+					"name": "meta.function.definition.calypso",
+					"begin": "\\b(fn)\\s+((?:r#(?!root|[Ss]elf|super))?[A-Za-z_][A-Za-z0-9_]+\\!?\\??)(\\()",
+					"beginCaptures": {
+						"1": {
+							"name": "keyword.other.fn.calypso"
+						},
+						"2": {
+							"name": "entity.name.function.calypso"
+						},
+						"4": {
+							"name": "punctuation.brackets.round.calypso"
+						}
+					},
+					"end": "->|;",
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.brackets.curly.calypso"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#block-comments"
+						},
+						{
+							"include": "#comments"
+						},
+						{
+							"include": "#keywords"
+						},
+						{
+							"include": "#special-variables"
+						},
+						{
+							"include": "#constants"
+						},
+						{
+							"include": "#functions"
+						},
+						{
+							"include": "#namespaces"
+						},
+						{
+							"include": "#punctuation"
+						},
+						{
+							"include": "#strings"
+						},
+						{
+							"include": "#types"
+						},
+						{
+							"include": "#variables"
+						}
+					]
+				},
+				{
+					"comment": "function/method calls, chaining",
+					"name": "meta.function.call.calypso",
+					"begin": "((?:r#(?!root|[Ss]elf|super))?[A-Za-z_][A-Za-z0-9_]+\\!?\\??)(\\()",
+					"beginCaptures": {
+						"1": {
+							"name": "entity.name.function.calypso"
+						},
+						"2": {
+							"name": "punctuation.brackets.round.calypso"
+						}
+					},
+					"end": "\\)",
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.brackets.round.calypso"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#block-comments"
+						},
+						{
+							"include": "#comments"
+						},
+						{
+							"include": "#keywords"
+						},
+						{
+							"include": "#special-variables"
+						},
+						{
+							"include": "#constants"
+						},
+						{
+							"include": "#functions"
+						},
+						{
+							"include": "#macros"
+						},
+						{
+							"include": "#namespaces"
+						},
+						{
+							"include": "#punctuation"
+						},
+						{
+							"include": "#strings"
+						},
+						{
+							"include": "#types"
+						},
+						{
+							"include": "#variables"
+						}
+					]
+				}
+			]
+		}
+	},
+	"scopeName": "source.calypso"
+}
