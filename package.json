@@ -2,7 +2,7 @@
     "name": "calypso-lang",
     "displayName": "Calypso Programming Language",
     "description": "Syntax highlighting for Calypso",
-    "version": "0.0.2",
+    "version": "0.1.0",
     "publisher": "calypso-lang",
     "engines": {
         "vscode": ">=1.53.2"
@@ -16,16 +16,25 @@
     "license": "MIT",
     "repository": "github:calypso-lang/calypso-syntax-highlighting",
     "contributes": {
-        "languages": [{
-            "id": "calypso",
-            "aliases": ["Calypso", "calypso"],
-            "extensions": [".cal"],
-            "configuration": "./language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "calypso",
-            "scopeName": "source.calypso",
-            "path": "./syntaxes/calypso.tmLanguage.json"
-        }]
+        "languages": [
+            {
+                "id": "calypso",
+                "aliases": [
+                    "Calypso",
+                    "calypso"
+                ],
+                "extensions": [
+                    ".cal"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "calypso",
+                "scopeName": "source.calypso",
+                "path": "./syntaxes/calypso.tmLanguage.json"
+            }
+        ]
     }
 }
