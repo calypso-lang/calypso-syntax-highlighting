@@ -86,7 +86,7 @@
 			"include": "#punctuation"
 		},
 		{
-			"include": "#namespace"
+			"include": "#namespaces"
 		},
 		{
 			"include": "#special-variables"
@@ -329,7 +329,7 @@
 				{
 					"comment": "variables",
 					"name": "variable.other.calypso",
-					"match": "\b(?<!(?<!\\.)\\.)(?!(root|self|super))[A-Za-z_][A-Za-z0-9_]*\\!?\\??"
+					"match": "\\b(?<!(?<!\\.)\\.)(?!(root|self|super))[A-Za-z_][A-Za-z0-9_]*\\!?\\??"
 				}
 			]
 		},
@@ -343,7 +343,7 @@
 							"name": "entity.name.namespace.calypso"
 						},
 						"2": {
-							"name": "keyword.operator.namespace.calypso"
+							"name": "keyword.operator.calypso"
 						}
 					}
 				}
@@ -496,7 +496,7 @@
 			},
 			"patterns": [
 				{
-					"include": "#source.calypso"
+					"include": "$self"
 				}
 			]
 		},
@@ -691,9 +691,6 @@
 						},
 						{
 							"include": "#functions"
-						},
-						{
-							"include": "#macros"
 						},
 						{
 							"include": "#namespaces"

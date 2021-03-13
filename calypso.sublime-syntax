@@ -1,0 +1,346 @@
+%YAML 1.2
+---
+# http://www.sublimetext.com/docs/3/syntax.html
+name: Calypso
+comment: This file was somewhat inspired by https://github.com/microsoft/vscode/blob/main/extensions/rust/syntaxes/rust.tmLanguage.json which is under the MIT license.
+file_extensions:
+  - cal
+scope: source.calypso
+contexts:
+  main:
+    - match: '(@)(\!?)([A-Za-z_][A-Za-z0-9_]*\!?\??)(?:\([^\)\n]*\))?'
+      comment: attributes
+      scope: meta.attribute.calypso
+      captures:
+        1: punctuation.definition.attribute.calypso
+        2: keyword.operator.attribute.inner.calypso
+        3: meta.attribute.name.calypso
+        4: meta.attribute.content.calypso
+    - match: '(mod)\s+(?!root|self|super)([a-z][A-Za-z0-9_]*)'
+      comment: modules
+      captures:
+        1: storage.type.calypso
+        2: entity.name.module.calypso
+    - match: \b(import)\s
+      comment: import statements
+      captures:
+        1: keyword.other.calypso
+      push:
+        - meta_scope: meta.import.calypso
+        - match: '}|\n'
+          captures:
+            0: punctuation.semi.calypso
+          pop: true
+        - include: block-comments
+        - include: comments
+        - include: keywords
+        - include: namespaces
+        - include: punctuation
+        - include: special-variables
+    - include: constants
+    - include: keywords
+    - include: block-comments
+    - include: comments
+    - include: punctuation
+    - include: namespaces
+    - include: special-variables
+    - include: variables
+    - include: strings
+    - include: types
+    - include: functions
+  block-comments:
+    - match: '/\*[\*!]{1}\*/'
+      comment: empty doc comment
+      scope: comment.block.documentation.calypso
+    - match: /\*\*/
+      comment: empty block comment
+      scope: comment.block.calypso
+    - match: '/\*[\*!]{1}'
+      comment: block doc comment
+      push:
+        - meta_scope: comment.block.documentation.calypso
+        - match: \*/
+          pop: true
+        - include: block-comments
+    - match: /\*(?!\*)
+      comment: block comment
+      push:
+        - meta_scope: comment.block.calypso
+        - match: \*/
+          pop: true
+        - include: block-comments
+  comments:
+    - match: '^\s*//[/!]{1}.*'
+      comment: doc comments, internal or external
+      scope: comment.line.documentation
+    - match: \s*//.*
+      comment: regular comments
+      scope: comment.line.double-slash
+  constants:
+    - match: '\b[A-Z]{2}[A-Z0-9_]*\!?\??\b'
+      comment: ALL CAPS constants
+      scope: constant.other.caps.calypso
+    - match: '\b(const)\s+([A-Z][A-Za-z0-9_]*\!?\??)\b'
+      comment: constant declarations
+      captures:
+        1: storage.type.calypso
+        2: constant.other.caps.calypso
+    - match: '\b[\-]?\d[\d_]*(\.?)[\d_]*(?:(E)([+-])([\d_]+))?(f|s|u)?\b'
+      comment: decimal integers and floats
+      scope: constant.numeric.decimal.calypso
+      captures:
+        1: punctuation.separator.dot.decimal.calypso
+        2: keyword.operator.exponent.calypso
+        3: keyword.operator.exponent.sign.calypso
+        4: constant.numeric.decimal.exponent.mantissa.calypso
+        5: entity.name.type.numeric.calypso
+    - match: '\b0x[\da-fA-F_]+(u|s)?\b'
+      comment: hexadecimal integers
+      scope: constant.numeric.hex.calypso
+      captures:
+        1: entity.name.type.numeric.calypso
+    - match: '\b0o[0-7_]+(u|s)?\b'
+      comment: octal integers
+      scope: constant.numeric.oct.calypso
+      captures:
+        1: entity.name.type.numeric.calypso
+    - match: '\b0b[01_]+(u|s)?\b'
+      comment: binary integers
+      scope: constant.numeric.bin.calypso
+      captures:
+        1: entity.name.type.numeric.calypso
+    - match: \b(true|false)\b
+      comment: booleans
+      scope: constant.language.bool.calypso
+    - match: \bnull\b
+      comment: nulls
+      scope: constant.language.null.calypso
+    - match: ':(?!")[A-Za-z_][A-Za-z0-9_]*\!?\??'
+      comment: atoms--they're essentially keywords so we treat them as so
+      scope: keyword.other.calypso
+    - match: (:)(")
+      comment: atoms, strings
+      captures:
+        1: punctuation.atom.calypso
+        2: punctuation.defintition.string.calypso
+      push:
+        - meta_scope: keyword.other.calypso
+        - meta_content_scope: string.quoted.double.calypso
+        - match: '"'
+          captures:
+            0: punctuation.definition.string.calypso
+          pop: true
+  escapes:
+    - match: '(\\)(?:(?:(x[0-7][0-7a-fA-F])|(u(\{)[\da-fA-F]{4,6}(\}))|.))'
+      comment: "escapes: ASCII, byte, Unicode, quote, regex"
+      scope: constant.character.escape.calypso
+      captures:
+        1: constant.character.escape.backslash.calypso
+        2: constant.character.escape.bit.calypso
+        3: constant.character.escape.unicode.calypso
+        4: constant.character.escape.unicode.punctuation.calypso
+        5: constant.character.escape.unicode.punctuation.calypso
+  functions:
+    - match: \b(pub)(\()
+      comment: pub as a function
+      captures:
+        1: keyword.other.calypso
+        2: punctuation.brackets.round.calypso
+    - match: '\b(fn)\s+((?!root|self|super)[A-Za-z_][A-Za-z0-9_]+\!?\??)(\()'
+      comment: function definition
+      captures:
+        1: keyword.other.fn.calypso
+        2: entity.name.function.calypso
+        4: punctuation.brackets.round.calypso
+      push:
+        - meta_scope: meta.function.definition.calypso
+        - match: "->|;"
+          captures:
+            0: punctuation.brackets.curly.calypso
+          pop: true
+        - include: block-comments
+        - include: comments
+        - include: keywords
+        - include: special-variables
+        - include: constants
+        - include: functions
+        - include: namespaces
+        - include: punctuation
+        - include: strings
+        - include: types
+        - include: variables
+    - match: '((?:r#(?!root|self|super))?[A-Za-z_][A-Za-z0-9_]+\!?\??)(\()'
+      comment: function/method calls, chaining
+      captures:
+        1: entity.name.function.calypso
+        2: punctuation.brackets.round.calypso
+      push:
+        - meta_scope: meta.function.call.calypso
+        - match: \)
+          captures:
+            0: punctuation.brackets.round.calypso
+          pop: true
+        - include: block-comments
+        - include: comments
+        - include: keywords
+        - include: special-variables
+        - include: constants
+        - include: functions
+        - include: namespaces
+        - include: punctuation
+        - include: strings
+        - include: types
+        - include: variables
+  interpolations:
+    - match: '\${'
+      comment: string interpolations
+      captures:
+        1: punctuation.definition.interpolation.calypso
+      push:
+        - meta_scope: meta.interpolation.calypso
+        - match: "}"
+          captures:
+            1: punctuation.definition.interpolation.calypso
+          pop: true
+        - include: main
+  keywords:
+    - match: \b(break|continue|do|else|for|if|loop|case|ret|try|catch|while|throw|end|->|\|>)\b
+      comment: control flow
+      scope: keyword.control.calypso
+    - match: \b(const|extern|let|mod|struct|trait|marker)\b
+      comment: storage keywords
+      scope: storage.type.calypso
+    - match: \b(as|impl|in|is|isa|isan|has|pub|import|where|assert|self|super)\b
+      comment: other keywords
+      scope: keyword.other.calypso
+    - match: \bfn\b
+      comment: fn
+      scope: keyword.other.fn.calypso
+    - match: \broot\b
+      comment: root
+      scope: keyword.other.root.calypso
+    - match: \bmut\b
+      comment: mut
+      scope: storage.modifier.mut.calypso
+    - match: (\^|\||\|\||&&|<<|>>|!)(?!=)
+      comment: logical operators
+      scope: keyword.operator.logical.calypso
+    - match: "&(?![&=])"
+      comment: logical AND
+      scope: keyword.operator.and.calypso
+    - match: (\+=|-=|\*=|\*\*=|/=|%=|\^=|&=|\|=|<<=|>>=)
+      comment: assignment operators
+      scope: keyword.operator.assignment.calypso
+    - match: "(?<![<>])=(?!=|>)"
+      comment: single equal
+      scope: keyword.operator.assingment.equal.calypso
+    - match: (=(=)?(?!>)|!=|<=|(?<!=)>=)
+      comment: comparison operators
+      scope: keyword.operator.comparison.calypso
+    - match: '(([+%]|(\*{1,2}))(?!=))|(-(?!>))|(/(?!/))'
+      comment: math operators
+      scope: keyword.operator.math.calypso
+    - match: '(?:\b|(?:(\))|(\])|(\})))[ \t]+([<>])[ \t]+(?:\b|(?:(\()|(\[)|(\{)))'
+      comment: less than, greater than (special case)
+      captures:
+        1: punctuation.brackets.round.calypso
+        2: punctuation.brackets.square.calypso
+        3: punctuation.brackets.curly.calypso
+        4: keyword.operator.comparison.calypso
+        5: punctuation.brackets.round.calypso
+        6: punctuation.brackets.square.calypso
+        7: punctuation.brackets.curly.calypso
+    - match: \.(?!\.)
+      comment: dot access
+      scope: keyword.operator.access.dot.calyppso
+    - match: '\.{2}(=|\.)?'
+      comment: ranges, range patterns
+      scope: keyword.operator.range.calypso
+    - match: ':(?![:A-Za-z0-9"])'
+      comment: colon
+      scope: keyword.operator.key-value.calypso
+    - match: "->"
+      comment: dashrocket, skinny arrow
+      scope: keyword.operator.arrow.skinny.calypso
+    - match: "=>"
+      comment: hashrocket, fat arrow
+      scope: keyword.operator.arrow.fat.calypso
+    - match: (println|type)
+      comment: builtin functions
+      scope: entity.name.function.calypso
+  namespaces:
+    - match: '(?<![A-Za-z0-9_])([a-z0-9_]+)((?<!super|self)\.)'
+      comment: namespace (non-type, non-function path segment)
+      captures:
+        1: entity.name.namespace.calypso
+        2: keyword.operator.calypso
+  punctuation:
+    - match: ","
+      comment: comma
+      scope: punctuation.comma.calypso
+    - match: "[{}]"
+      comment: curly braces
+      scope: punctuation.braces.curly.calypso
+    - match: "[()]"
+      comment: parentheses, round brackets
+      scope: punctuation.brackets.round.calypso
+    - match: ;
+      comment: semicolon
+      scope: punctuation.semi.calypso
+    - match: '[\[\]]'
+      comment: square brackets
+      scope: punctuation.brackets.square.calypso
+    - match: "(?<!=)[<>]"
+      comment: angle brackets
+      scope: punctuation.brackets.angle.calypso
+  special-variables:
+    - match: \bself\b
+      comment: self
+      scope: variable.language.self.calypso
+    - match: \bsuper\b
+      comment: super
+      scope: variable.language.super.calypso
+  strings:
+    - match: (")
+      comment: double-quoted strings
+      captures:
+        1: punctuation.definition.string.calypso
+      push:
+        - meta_scope: string.quoted.double.calypso
+        - match: '"'
+          captures:
+            0: punctuation.definition.string.calypso
+          pop: true
+        - include: escapes
+        - include: interpolations
+    - match: (')
+      comment: characters
+      captures:
+        1: punctuation.definition.char.calypso
+      push:
+        - meta_scope: string.quoted.single.char.calypso
+        - match: "'"
+          captures:
+            0: punctuation.definition.char.calypso
+          pop: true
+        - include: escapes
+  types:
+    - match: '(?<![A-Za-z])(float|sint|uint)\b'
+      comment: numeric types
+      captures:
+        1: entity.name.type.numeric.calypso
+    - match: \b(bool|char|string|array|tuple|hash|atom|any)\b
+      comment: primitive types
+      scope: entity.name.type.primitive.calypso
+    - match: '\b(trait)\s+([A-Z][A-Za-z0-9]*)\b'
+      comment: trait declarations
+      captures:
+        1: storage.type.calypso
+        2: entity.name.type.trait.calypso
+    - match: '\b[A-Z][A-Za-z0-9]*\b'
+      comment: types
+      scope: entity.name.type.calypso
+  variables:
+    - match: '\b(?<!(?<!\.)\.)(?!(root|self|super))[A-Za-z_][A-Za-z0-9_]*\!?\??'
+      comment: variables
+      scope: variable.other.calypso
